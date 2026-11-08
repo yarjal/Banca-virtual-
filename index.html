@@ -3,7 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#f6f8fc">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Banco Andino">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="img/icon-192.png">
+  <link rel="apple-touch-icon" href="img/icon-192.png">
   <title>Banco Andino · Banca Virtual</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,18 +19,36 @@
 <body>
   <div class="phone">
 
+    <!-- ================= SPLASH ================= -->
+    <div class="splash" id="splash">
+      <div class="logo logo-lg"><span class="logo-mark"></span><span class="logo-text">BANCO<br>ANDINO</span></div>
+      <div class="spinner"></div>
+    </div>
+
     <!-- ================= LOGIN ================= -->
     <section class="screen active" id="screen-login">
       <div class="login">
         <div class="logo logo-lg"><span class="logo-mark"></span><span class="logo-text">BANCO<br>ANDINO</span></div>
-        <h1>Bienvenido</h1>
-        <p class="muted">Ingresa a tu banca virtual</p>
+        <h1 id="login-hello">¡Hola!</h1>
+        <p class="muted">Ingresa a tu Banca Móvil</p>
         <form id="form-login" class="form">
-          <label>Usuario<input id="login-user" type="text" value="usuario.demo" autocomplete="username" required></label>
-          <label>Contraseña<input id="login-pass" type="password" value="1234" autocomplete="current-password" required></label>
-          <button class="btn-primary" type="submit">Ingresar</button>
-          <p class="hint">Demo: cualquier usuario y contraseña funcionan.</p>
+          <label class="field">
+            <input id="login-user" type="text" placeholder=" " value="usuario.demo" autocomplete="username" required>
+            <span>Usuario</span>
+          </label>
+          <label class="field">
+            <input id="login-pass" type="password" placeholder=" " autocomplete="current-password" required>
+            <span>Contraseña</span>
+            <button type="button" class="field-eye" id="toggle-pass" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          </label>
+          <a href="#" class="link small right" data-toast="Te enviamos un enlace a tu correo registrado">¿Olvidaste tu usuario o contraseña?</a>
+          <button class="btn-primary" type="submit" id="btn-login"><span>Ingresar</span></button>
+          <button class="bio" type="button" id="btn-bio">
+            <svg viewBox="0 0 24 24"><path d="M12 11v3m-3.5-3.5a3.5 3.5 0 0 1 7 0V14c0 2-.5 4-1.5 5.5M8.5 14c0 2.5-.6 4.3-1.5 5.5M5.5 9a7 7 0 0 1 13 1.5V13M5 13v-1.5M12 4.5c1.3 0 2.5.3 3.6.9M8.4 5.4"/><path d="M12 14c0 2.8-.7 5-2 7"/></svg>
+            Ingresar con huella
+          </button>
         </form>
+        <p class="login-foot muted small">¿Aún no tienes usuario? <a href="#" class="link" data-toast="Regístrate en cualquier agencia">Regístrate</a></p>
       </div>
     </section>
 
@@ -45,7 +70,8 @@
       <div class="content">
         <div class="promo">
           <div class="promo-img">
-            <svg viewBox="0 0 120 100"><rect width="120" height="100" fill="#3b82f6"/><circle cx="95" cy="20" r="14" fill="#fde047"/><rect x="18" y="22" width="40" height="66" rx="6" fill="#111827"/><rect x="22" y="28" width="32" height="52" rx="3" fill="#fde047"/><text x="38" y="58" font-size="11" font-weight="800" text-anchor="middle" fill="#1e1b4b">100</text><text x="38" y="68" font-size="6" text-anchor="middle" fill="#1e1b4b">puntos</text><circle cx="82" cy="52" r="10" fill="#f4c7a1"/><path d="M70 100c0-18 6-30 12-30s12 12 12 30z" fill="#f97316"/></svg>
+            <div class="mini-card"><span class="chip-gold"></span><span class="mc-brand">andino</span><span class="mc-num">•••• 8633</span><span class="mc-visa">VISA</span></div>
+            <span class="pts">+100 pts</span>
           </div>
           <div class="promo-text">
             <p>¿Listo para ganar premios? Cumple retos con tu Visa Débito y participa.</p>
@@ -64,7 +90,7 @@
           <button class="chip">Préstamos</button>
         </div>
 
-        <div class="account-card">
+        <div class="account-card" id="account-card">
           <div class="account-top">
             <div>
               <div class="account-name" id="acc-name">FLEX8633</div>
@@ -213,8 +239,12 @@
         <div class="recipient-card" id="amount-recipient"></div>
         <form id="form-amount" class="form">
           <label class="amount-label">¿Cuánto quieres transferir?
-            <div class="amount-input"><span>$</span><input id="amount" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off" required></div>
+            <div class="amount-input"><input id="amount" type="text" inputmode="numeric" value="$0,00" autocomplete="off" aria-label="Monto"></div>
           </label>
+          <div class="quick-amounts">
+            <button type="button" data-monto="5">$5</button><button type="button" data-monto="10">$10</button>
+            <button type="button" data-monto="20">$20</button><button type="button" data-monto="50">$50</button>
+          </div>
           <p class="small muted center">Saldo disponible: <b id="amount-balance"></b></p>
           <label>Descripción (opcional)<input id="description" type="text" maxlength="40" placeholder="Ej: Almuerzo"></label>
           <p class="error" id="amount-error"></p>
@@ -305,6 +335,31 @@
         </form>
       </div>
     </section>
+
+    <!-- Clave de seguridad -->
+    <div class="sheet-backdrop" id="pin-sheet">
+      <div class="sheet">
+        <span class="sheet-grip"></span>
+        <h3>Ingresa tu clave de seguridad</h3>
+        <p class="small muted">Es la clave de 6 dígitos que usas para tus transacciones</p>
+        <div class="pin-dots" id="pin-dots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <p class="error" id="pin-error"></p>
+        <div class="keypad" id="keypad">
+          <button>1</button><button>2</button><button>3</button>
+          <button>4</button><button>5</button><button>6</button>
+          <button>7</button><button>8</button><button>9</button>
+          <button data-k="cancel" class="k-text">Cancelar</button><button>0</button>
+          <button data-k="del" aria-label="Borrar"><svg viewBox="0 0 24 24"><path d="M9 5h11v14H9l-6-7z"/><path d="m12 9 5 6m0-6-5 6"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Procesando -->
+    <div class="processing" id="processing">
+      <div class="spinner big"></div>
+      <p id="processing-text">Estamos procesando tu transferencia</p>
+      <span class="small muted">No cierres la aplicación</span>
+    </div>
 
     <div class="toast" id="toast"></div>
   </div>

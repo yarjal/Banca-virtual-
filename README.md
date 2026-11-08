@@ -7,7 +7,22 @@ Banca virtual móvil hecha con **HTML, CSS y JavaScript puro**, sin instalar nad
 - Abre `index.html` en el navegador (mejor en vista móvil: F12 → icono de celular), o
 - publícala gratis con **GitHub Pages**: Settings → Pages → Branch `main` / root.
 
-Usuario y contraseña de demo: cualquiera.
+Usuario y contraseña de demo: cualquiera. Clave de seguridad para transferir: cualquier número de 6 dígitos.
+
+## Instalarla en el celular como una app
+1. Publícala con GitHub Pages (necesita `https`).
+2. Ábrela en el celular con Chrome → menú ⋮ → **Agregar a pantalla principal / Instalar app**
+   (en iPhone: Safari → Compartir → **Agregar a inicio**).
+3. Se abre con su ícono, a pantalla completa y sin la barra del navegador.
+
+En la computadora la app se muestra dentro de un marco de celular.
+
+## Detalles de app real
+- Pantalla de carga al abrir, login con etiquetas flotantes, mostrar/ocultar contraseña e ingreso con huella.
+- Transiciones deslizantes entre pantallas (adelante y atrás) y carga tipo "skeleton" del saldo.
+- Monto como en las apps de banco: escribes 3-1-5 y aparece $3,15. También hay montos rápidos.
+- Antes de transferir se pide una **clave de seguridad de 6 dígitos** con teclado numérico y luego aparece "Procesando…".
+- Vibración ligera al tocar (en celulares que lo permiten).
 
 ## Pantallas
 1. **Inicio**: saldo (con ojo para ocultarlo), Mis productos, ¿Qué quieres hacer?, últimos movimientos y barra inferior.
@@ -29,5 +44,7 @@ index.html        pantallas
 css/styles.css    diseño
 js/data.js        personas, contactos y saldo inicial
 js/app.js         lógica (navegación, búsqueda con foto, transferencias, comprobante)
+manifest.json     datos para instalarla como app
+sw.js             service worker (instalación y uso sin internet)
 img/contactos/    fotos de perfil
 ```

@@ -8,6 +8,10 @@ let historial = [];          // pila de pantallas para el botón "atrás"
 let destinatario = null;     // contacto seleccionado para transferir
 let transferencia = null;    // { monto, descripcion }
 let fotoSubida = null;       // foto cargada en "Nueva cuenta"
+let centavos = 0;            // monto que se va escribiendo (en centavos)
+let pin = "";                // clave de seguridad que se va escribiendo
+const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
+const vibrar = (ms = 8) => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
 
 /* ---------- Persistencia ---------- */
 function cargar() {
@@ -61,18 +65,21 @@ function leerMonto(txt) {
 }
 
 /* ---------- Navegación ---------- */
-function ir(nombre, { reemplazar = false } = {}) {
+function ir(nombre, { reemplazar = false, efecto = "" } = {}) {
   const actual = document.querySelector(".screen.active");
   if (actual && !reemplazar) historial.push(actual.id.replace("screen-", ""));
-  document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
-  $("#screen-" + nombre).classList.add("active");
+  document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active", "back", "fade"));
+  const sig = $("#screen-" + nombre);
+  if (efecto) sig.classList.add(efecto);
+  sig.classList.add("active");
   window.scrollTo(0, 0);
+  document.querySelector(".phone").scrollTop = 0;
   const render = { home: renderInicio, transfer: renderContactos, "new-account": resetNueva, amount: renderMonto,
                    confirm: renderConfirmar, receive: renderRecibir, profile: renderPerfil }[nombre];
   if (render) render();
 }
-function atras() { ir(historial.pop() || "home", { reemplazar: true }); }
-function inicio() { historial = []; ir("home", { reemplazar: true }); }
+function atras() { ir(historial.pop() || "home", { reemplazar: true, efecto: "back" }); }
+function inicio() { historial = []; ir("home", { reemplazar: true, efecto: "back" }); }
 
 /* ---------- Inicio ---------- */
 function renderInicio() {
@@ -180,7 +187,10 @@ function renderMonto() {
     <span class="bank-chip"><i></i>${escapar(c.banco)}</span></div>`;
   $("#amount-balance").textContent = dinero(estado.saldo);
   $("#amount-error").textContent = "";
-  setTimeout(() => $("#amount").focus(), 50);
+  centavos = 0;
+  $("#amount").value = dinero(0);
+  $("#description").value = "";
+  setTimeout(() => $("#amount").focus(), 300);
 }
 
 /* ---------- Confirmar ---------- */
@@ -205,7 +215,7 @@ function ejecutarTransferencia() {
   guardar();
   renderComprobante(ahora, comprobante);
   historial = [];
-  ir("receipt", { reemplazar: true });
+  ir("receipt", { reemplazar: true, efecto: "fade" });
 }
 
 /* ---------- Comprobante (con la foto del destinatario) ---------- */
@@ -273,7 +283,41 @@ document.addEventListener("click", (e) => {
   }
 });
 
-$("#form-login").addEventListener("submit", (e) => { e.preventDefault(); historial = []; ir("home", { reemplazar: true }); });
+async function entrar() {
+  historial = [];
+  ir("home", { reemplazar: true, efecto: "fade" });
+  const card = $("#account-card");
+  card.classList.add("skeleton");
+  await esperar(700);
+  card.classList.remove("skeleton");
+}
+$("#form-login").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const b = $("#btn-login");
+  b.classList.add("loading");
+  await esperar(1100);
+  b.classList.remove("loading");
+  $("#login-pass").value = "";
+  entrar();
+});
+$("#btn-bio").addEventListener("click", async () => {
+  await procesando("Coloca tu dedo en el lector", 1300);
+  vibrar(30);
+  entrar();
+});
+$("#toggle-pass").addEventListener("click", () => {
+  const i = $("#login-pass");
+  i.type = i.type === "password" ? "text" : "password";
+});
+$("#login-hello").textContent = "¡Hola, " + estado.usuario.split(" ")[0] + "!";
+
+// Pantalla de carga al abrir la app
+window.addEventListener("load", () => setTimeout(() => $("#splash").classList.add("hide"), 1200));
+
+// Instalable como app (PWA)
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
 $("#toggle-balance").addEventListener("click", () => { saldoVisible = !saldoVisible; renderInicio(); });
 $("#search-contact").addEventListener("input", renderContactos);
 
@@ -314,16 +358,60 @@ $("#form-new").addEventListener("submit", (e) => {
   ir("amount", { reemplazar: true });
 });
 
-$("#amount").addEventListener("input", (e) => { e.target.value = e.target.value.replace(/[^\d.,]/g, ""); });
+// Monto estilo app bancaria: escribes 3-1-5 y se ve $3,15
+function pintarMonto() {
+  const el = $("#amount");
+  el.value = dinero(centavos / 100);
+  requestAnimationFrame(() => el.setSelectionRange(el.value.length, el.value.length));
+  $("#amount-error").textContent = "";
+}
+$("#amount").addEventListener("beforeinput", (e) => {
+  e.preventDefault();                               // nosotros controlamos el texto
+  if (e.inputType.startsWith("delete")) centavos = Math.floor(centavos / 10);
+  else if (/^\d+$/.test(e.data || "")) centavos = Math.min(+(String(centavos) + e.data), 9999999);
+  pintarMonto();
+});
+$("#amount").addEventListener("input", pintarMonto); // por si algún teclado no envía beforeinput
+$("#amount").addEventListener("focus", pintarMonto);
+document.querySelectorAll("[data-monto]").forEach((b) =>
+  b.addEventListener("click", () => { centavos = +b.dataset.monto * 100; pintarMonto(); vibrar(); }));
 $("#form-amount").addEventListener("submit", (e) => {
   e.preventDefault();
-  const monto = leerMonto($("#amount").value);
+  const monto = centavos / 100;
   if (monto <= 0) return ($("#amount-error").textContent = "Ingresa un monto válido");
   if (monto > estado.saldo) return ($("#amount-error").textContent = "Saldo insuficiente");
   transferencia = { monto, descripcion: $("#description").value.trim() };
   ir("confirm");
 });
-$("#btn-confirm").addEventListener("click", ejecutarTransferencia);
+$("#btn-confirm").addEventListener("click", abrirClave);
+
+/* ---------- Clave de seguridad + procesando ---------- */
+function abrirClave() { pin = ""; pintarPin(); $("#pin-error").textContent = ""; $("#pin-sheet").classList.add("open"); }
+function cerrarClave() { $("#pin-sheet").classList.remove("open"); }
+function pintarPin() { document.querySelectorAll("#pin-dots i").forEach((d, i) => d.classList.toggle("on", i < pin.length)); }
+$("#pin-sheet").addEventListener("click", (e) => { if (e.target.id === "pin-sheet") cerrarClave(); });
+$("#keypad").addEventListener("click", async (e) => {
+  const b = e.target.closest("button");
+  if (!b || pin.length >= 6 && !b.dataset.k) return;
+  vibrar();
+  if (b.dataset.k === "cancel") return cerrarClave();
+  if (b.dataset.k === "del") { pin = pin.slice(0, -1); return pintarPin(); }
+  pin += b.textContent.trim();
+  pintarPin();
+  if (pin.length === 6) {
+    await esperar(250);
+    cerrarClave();
+    await procesando("Estamos procesando tu transferencia", 1800);
+    vibrar(30);
+    ejecutarTransferencia();
+  }
+});
+async function procesando(texto, ms) {
+  $("#processing-text").textContent = texto;
+  $("#processing").classList.add("show");
+  await esperar(ms);
+  $("#processing").classList.remove("show");
+}
 $("#btn-share").addEventListener("click", compartir);
 $("#btn-copy").addEventListener("click", async () => {
   try { await navigator.clipboard.writeText(`${estado.usuario}\nCta. Ahorro ${estado.cuentaNumero}\nBanco Andino`); toast("Datos copiados"); }
@@ -339,4 +427,4 @@ $("#form-profile").addEventListener("submit", (e) => {
 $("#btn-reset").addEventListener("click", () => {
   estado = structuredClone(ESTADO_INICIAL); guardar(); toast("Datos restablecidos"); inicio();
 });
-$("#btn-logout").addEventListener("click", () => { historial = []; ir("login", { reemplazar: true }); });
+$("#btn-logout").addEventListener("click", () => { historial = []; ir("login", { reemplazar: true, efecto: "back" }); });
