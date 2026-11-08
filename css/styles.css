@@ -153,7 +153,6 @@ mark{background:#fff3a3;color:inherit;border-radius:2px}
 
 /* Comprobante */
 .receipt{background:#fff;text-align:center;padding:24px 22px 130px;position:relative}
-.receipt::before{content:"DEMO · PROYECTO UNIVERSITARIO";position:absolute;top:44%;left:50%;transform:translate(-50%,-50%) rotate(-28deg);font-size:26px;font-weight:900;color:rgba(15,38,92,.06);white-space:nowrap;pointer-events:none}
 .receipt-brand{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:22px}
 .receipt-brand .divider{width:1px;height:34px;background:var(--line)}
 .brand2{font-size:30px;font-weight:900;font-style:italic;color:#4c1d95;letter-spacing:-1px}
@@ -177,3 +176,4 @@ mark{background:#fff3a3;color:inherit;border-radius:2px}
 
 .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:#111827;color:#fff;padding:10px 18px;border-radius:20px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90%;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%)}
+.receipt-note{font-size:11px;color:#9ca3af;margin-top:6px}
