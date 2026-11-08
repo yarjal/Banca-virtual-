@@ -211,7 +211,6 @@ function ejecutarTransferencia() {
 /* ---------- Comprobante (con la foto del destinatario) ---------- */
 function renderComprobante(fecha, numero) {
   const c = destinatario;
-  $("#r-avatar").outerHTML = avatarHTML(c, "avatar-xxl").replace('class="avatar', 'id="r-avatar" class="avatar');
   $("#r-amount").textContent = dinero(transferencia.monto).replace("$", "$ ");
   $("#r-to").textContent = "A " + c.nombre;
   $("#r-date").textContent = "El " + fechaLarga(fecha);

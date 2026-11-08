@@ -157,10 +157,9 @@ mark{background:#fff3a3;color:inherit;border-radius:2px}
 .receipt-brand{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:22px}
 .receipt-brand .divider{width:1px;height:34px;background:var(--line)}
 .brand2{font-size:30px;font-weight:900;font-style:italic;color:#4c1d95;letter-spacing:-1px}
-.receipt-photo-wrap{position:relative;width:110px;margin:0 auto 12px}
-.ok-badge{position:absolute;right:-4px;bottom:2px;width:36px;height:36px;border-radius:50%;background:var(--green);border:3px solid #fff;display:grid;place-items:center;color:#fff}
-.ok-badge svg{width:20px;height:20px;stroke-width:3}
-.receipt-title{font-size:21px;margin-bottom:10px}
+.receipt-check{width:56px;height:56px;border-radius:50%;background:var(--green);display:grid;place-items:center;color:#fff;margin:6px auto 22px;animation:pop .4s ease}
+.receipt-check svg{width:34px;height:34px;stroke-width:3}
+.receipt-title{font-size:21px;margin-bottom:14px;color:#1f2937}
 .receipt-amount{font-size:42px;font-weight:700;color:#111827}
 .receipt-to{font-size:19px;font-weight:800;margin:4px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .receipt-date,.receipt-from{font-size:16px;color:#374151;margin-bottom:6px}

@@ -13,7 +13,7 @@ Usuario y contraseña de demo: cualquiera.
 1. **Inicio**: saldo (con ojo para ocultarlo), Mis productos, ¿Qué quieres hacer?, últimos movimientos y barra inferior.
 2. **Transferir a**: buscador de contactos (con su foto), Nueva cuenta / Nuevo celular / Al Exterior y Mis contactos agrupados por letra.
 3. **Nueva cuenta**: **al escribir el nombre del destinatario aparece su foto** y sugerencias con foto. También puedes subir una foto.
-4. **Monto → Confirmación → Comprobante**: el comprobante muestra la **foto del destinatario**, el monto, la fecha, las cuentas, el N° de comprobante y un QR.
+4. **Monto → Confirmación → Comprobante**: el comprobante muestra un visto verde de éxito, el monto, la fecha, las cuentas, el N° de comprobante y un QR.
 5. **Recibir dinero** (QR con tus datos) y **Perfil** (cambiar nombre/saldo, restablecer datos).
 
 Los datos (saldo, contactos, movimientos) se guardan en el navegador (`localStorage`).
