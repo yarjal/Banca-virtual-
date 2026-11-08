@@ -212,7 +212,7 @@ function ejecutarTransferencia() {
 function renderComprobante(fecha, numero) {
   const c = destinatario;
   $("#r-amount").textContent = dinero(transferencia.monto).replace("$", "$ ");
-  $("#r-to").textContent = "A " + c.nombre;
+  $("#r-to").textContent = "A " + apellidosPrimero(c.nombre);
   $("#r-date").textContent = "El " + fechaLarga(fecha);
   $("#r-from").textContent = "De " + estado.usuario;
   $("#r-dest").textContent = enmascarar(c.cuenta);
@@ -224,6 +224,12 @@ function renderComprobante(fecha, numero) {
   dibujarQR("#r-qr", `DEMO|Comprobante ${numero}|${dinero(transferencia.monto)}|${c.nombre}|${fecha.toISOString()}`);
   renderComprobante.texto =
     `Comprobante (DEMO) N° ${numero}\n${dinero(transferencia.monto)} a ${c.nombre}\n${fechaLarga(fecha)}\nBanco destino: ${c.banco}`;
+}
+// Como en los comprobantes reales: "Apellido Apellido Nombre(s)"
+function apellidosPrimero(nombre) {
+  const p = nombre.trim().split(/\s+/);
+  if (p.length < 3) return nombre;
+  return [...p.slice(-2), ...p.slice(0, -2)].join(" ");
 }
 function dibujarQR(sel, texto) {
   const el = $(sel);
