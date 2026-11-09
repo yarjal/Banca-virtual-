@@ -1,6 +1,6 @@
 // Service worker: permite instalar la app y abrirla sin internet
-const CACHE = "banco-andino-v1";
-const ARCHIVOS = ["./", "index.html", "css/styles.css", "js/data.js", "js/app.js", "manifest.json",
+const CACHE = "banco-andino-v2";
+const ARCHIVOS = ["./", "index.html", "css/styles.css", "js/data.js", "js/app.js", "js/funciones.js", "manifest.json",
   "img/icon-192.png", "img/icon-512.png"];
 
 self.addEventListener("install", (e) => {

@@ -53,13 +53,13 @@
     </section>
 
     <!-- ================= INICIO ================= -->
-    <section class="screen" id="screen-home">
+    <section class="screen tab" id="screen-home">
       <header class="topbar">
         <div class="logo"><span class="logo-mark"></span><span class="logo-text">BANCO<br>ANDINO</span></div>
         <div class="topbar-actions">
-          <button class="icon-btn" aria-label="Notificaciones" data-toast="Tienes 3 notificaciones nuevas">
+          <button class="icon-btn" aria-label="Notificaciones" id="btn-notif">
             <svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4l2-2zM10 21h4"/></svg>
-            <span class="badge">3</span>
+            <span class="badge" id="notif-badge">3</span>
           </button>
           <button class="icon-btn" aria-label="Ayuda" data-toast="Centro de ayuda (demo)">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14M12 17h.01"/></svg>
@@ -68,52 +68,50 @@
       </header>
 
       <div class="content">
-        <div class="promo">
-          <div class="promo-img">
-            <div class="mini-card"><span class="chip-gold"></span><span class="mc-brand">andino</span><span class="mc-num">•••• 8633</span><span class="mc-visa">VISA</span></div>
-            <span class="pts">+100 pts</span>
+        <div class="carousel" id="promo-carousel">
+          <div class="promo slide">
+            <div class="promo-img">
+              <div class="mini-card"><span class="chip-gold"></span><span class="mc-brand">andino</span><span class="mc-num">•••• 8633</span><span class="mc-visa">VISA</span></div>
+              <span class="pts">+100 pts</span>
+            </div>
+            <div class="promo-text">
+              <p>¿Listo para ganar premios? Cumple retos con tu Visa Débito y participa.</p>
+              <a href="#" data-tab="benefits">Jugar ahora</a>
+            </div>
           </div>
-          <div class="promo-text">
-            <p>¿Listo para ganar premios? Cumple retos con tu Visa Débito y participa.</p>
-            <a href="#" data-toast="Promoción de ejemplo">Jugar ahora</a>
+          <div class="promo slide">
+            <div class="promo-img green"><span class="promo-emoji">🌎</span></div>
+            <div class="promo-text">
+              <p>Ahora puedes enviar dinero al exterior desde tu Banca Móvil.</p>
+              <a href="#" data-toast="Transferencias al exterior: próximamente">Conoce más</a>
+            </div>
+          </div>
+          <div class="promo slide">
+            <div class="promo-img purple"><span class="promo-emoji">📱</span></div>
+            <div class="promo-text">
+              <p>Paga en comercios escaneando el QR con andina! Rápido y sin efectivo.</p>
+              <a href="#" data-go="qr">Escanear QR</a>
+            </div>
           </div>
         </div>
+        <div class="dots" id="promo-dots"><i class="on"></i><i></i><i></i></div>
 
         <div class="section-head">
           <h2>Mis productos</h2>
-          <a href="#" class="link" data-toast="Solo tienes 1 producto">Ver todos <span>›</span></a>
+          <a href="#" class="link" data-tab="products">Ver todos <span>›</span></a>
         </div>
-        <div class="chips">
+        <div class="chips" id="home-chips">
           <button class="chip active">Todos</button>
           <button class="chip">Cuentas</button>
           <button class="chip">Tarjetas</button>
           <button class="chip">Préstamos</button>
         </div>
 
-        <div class="account-card" id="account-card">
-          <div class="account-top">
-            <div>
-              <div class="account-name" id="acc-name">FLEX8633</div>
-              <div class="account-mask" id="acc-mask">******8633</div>
-            </div>
-            <div class="fav"><span class="star">★</span> Cta. favorita</div>
-          </div>
-          <div class="account-bottom">
-            <div>
-              <div class="small muted">Saldo disponible</div>
-              <div class="balance"><span id="balance">$0,00</span>
-                <button class="eye" id="toggle-balance" aria-label="Mostrar u ocultar saldo">
-                  <svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
-                </button>
-              </div>
-            </div>
-            <div class="small muted right">Cuenta<br>Transaccional</div>
-          </div>
-        </div>
-        <p class="pager">1 de 1</p>
+        <div class="products-track" id="products-track"></div>
+        <p class="pager" id="products-pager">1 de 1</p>
 
         <h3 class="subtitle">¿Qué quieres hacer?</h3>
-        <div class="actions-grid">
+        <div class="actions-scroll">
           <button class="action-tile" data-go="transfer">
             <svg viewBox="0 0 48 48" class="ill"><ellipse cx="28" cy="12" rx="12" ry="5" fill="#fff" stroke="#1e3a8a" stroke-width="2"/><path d="M16 12v6c0 2.8 5.4 5 12 5s12-2.2 12-5v-6M16 18v6c0 2.8 5.4 5 12 5s12-2.2 12-5v-6" fill="none" stroke="#1e3a8a" stroke-width="2"/><circle cx="16" cy="32" r="9" fill="#facc15" stroke="#1e3a8a" stroke-width="2"/><text x="16" y="36" font-size="11" font-weight="800" text-anchor="middle" fill="#1e3a8a">$</text></svg>
             <span>Transferir dinero</span>
@@ -126,21 +124,26 @@
             <span class="dlogo">a!</span>
             <span>Escanear o mostrar QR</span>
           </button>
+          <button class="action-tile" data-go="services">
+            <svg viewBox="0 0 48 48" class="ill"><rect x="10" y="6" width="28" height="36" rx="3" fill="#fff" stroke="#1e3a8a" stroke-width="2"/><path d="M16 15h16M16 21h16M16 27h9" stroke="#1e3a8a" stroke-width="2"/><circle cx="34" cy="34" r="8" fill="#facc15" stroke="#1e3a8a" stroke-width="2"/><path d="m35 29-3 5h4l-3 5" fill="none" stroke="#1e3a8a" stroke-width="1.8"/></svg>
+            <span>Pagar servicios</span>
+          </button>
+          <button class="action-tile" data-go="recharge">
+            <svg viewBox="0 0 48 48" class="ill"><rect x="14" y="5" width="20" height="38" rx="4" fill="#fff" stroke="#1e3a8a" stroke-width="2"/><path d="M21 38h6" stroke="#1e3a8a" stroke-width="2"/><circle cx="24" cy="21" r="7" fill="#facc15" stroke="#1e3a8a" stroke-width="2"/><path d="M24 17v8M20 21h8" stroke="#1e3a8a" stroke-width="2"/></svg>
+            <span>Recargar celular</span>
+          </button>
+          <button class="action-tile" data-go="withdraw">
+            <svg viewBox="0 0 48 48" class="ill"><rect x="6" y="8" width="36" height="18" rx="2" fill="#fff" stroke="#1e3a8a" stroke-width="2"/><rect x="13" y="22" width="22" height="20" rx="1" fill="#facc15" stroke="#1e3a8a" stroke-width="2"/><text x="24" y="36" font-size="10" font-weight="800" text-anchor="middle" fill="#1e3a8a">$</text></svg>
+            <span>Retiro sin tarjeta</span>
+          </button>
         </div>
 
         <div class="section-head">
           <h2 class="h2-sm">Últimos movimientos</h2>
+          <a href="#" class="link" data-tab="products">Ver todos <span>›</span></a>
         </div>
         <ul class="movements" id="movements"></ul>
       </div>
-
-      <nav class="bottom-nav">
-        <button class="nav-item active"><svg viewBox="0 0 24 24" class="fill"><path d="M3 11 12 3l9 8v10h-6v-6H9v6H3z"/></svg><span>Inicio</span></button>
-        <button class="nav-item" data-toast="Productos (demo)"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M16 11h5v4h-5a2 2 0 0 1 0-4zM6 6V4h12v2"/></svg><span>Productos</span></button>
-        <button class="nav-item" data-toast="Solicitudes (demo)"><svg viewBox="0 0 24 24"><path d="M3 9 12 4l9 5M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18"/></svg><span>Solicitudes</span></button>
-        <button class="nav-item" data-toast="Beneficios (demo)"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M3 12h18M7 8V5m4 3V5m4 3V5m4 3V5"/></svg><span>Beneficios</span></button>
-        <button class="nav-item" data-go="profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg><span>Perfil</span></button>
-      </nav>
     </section>
 
     <!-- ================= TRANSFERIR A ================= -->
@@ -278,24 +281,18 @@
         <div class="receipt-check" aria-hidden="true">
           <svg viewBox="0 0 24 24"><path d="m6.5 12.5 3.5 3.5 7.5-8"/></svg>
         </div>
-        <h2 class="receipt-title">¡Pago exitoso con andina!</h2>
+        <h2 class="receipt-title" id="r-title">¡Pago exitoso con andina!</h2>
         <div class="receipt-amount" id="r-amount"></div>
         <div class="receipt-to" id="r-to"></div>
         <div class="receipt-date" id="r-date"></div>
         <div class="receipt-from" id="r-from"></div>
-        <dl class="receipt-details">
-          <div><dt>Cuenta destino</dt><dd id="r-dest"></dd></div>
-          <div><dt>Banco destino</dt><dd id="r-bank"></dd></div>
-          <div><dt>Cuenta origen</dt><dd id="r-origin"></dd></div>
-          <div><dt>N° de comprobante</dt><dd id="r-number"></dd></div>
-          <div id="r-desc-row"><dt>Descripción</dt><dd id="r-desc"></dd></div>
-        </dl>
+        <dl class="receipt-details" id="r-details"></dl>
         <p class="small center">Verificar la transacción con este QR.</p>
         <div class="qr" id="r-qr"></div>
       </div>
       <nav class="receipt-actions">
         <button id="btn-share"><span class="circle solid"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.4M8.2 13.2l7.6 4.4"/></svg></span>Compartir<br>comprobante</button>
-        <button data-go="transfer"><span class="circle"><svg viewBox="0 0 24 24"><path d="M4 8h14l-3-3M20 16H6l3 3"/></svg></span>Volver a<br>transferir</button>
+        <button id="r-again"><span class="circle"><svg viewBox="0 0 24 24"><path d="M4 8h14l-3-3M20 16H6l3 3"/></svg></span><span id="r-again-text">Volver a<br>transferir</span></button>
         <button data-toast="¡Gracias por calificarnos! ★★★★★"><span class="circle"><svg viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg></span>Calificar<br>experiencia</button>
         <button data-home><span class="circle"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8M5 9.5V21h14V9.5M10 21v-6h4v6"/></svg></span>Volver<br>al inicio</button>
       </nav>
@@ -319,22 +316,215 @@
       </div>
     </section>
 
-    <!-- ================= PERFIL ================= -->
-    <section class="screen" id="screen-profile">
-      <header class="appbar">
-        <button class="icon-btn" data-back aria-label="Atrás"><svg viewBox="0 0 24 24"><path d="M20 12H5m6-6-6 6 6 6"/></svg></button>
-        <h1>Perfil</h1><div></div>
-      </header>
+    <!-- ================= PERFIL (pestaña) ================= -->
+    <section class="screen tab" id="screen-profile">
+      <header class="appbar"><h1 class="tab-title">Perfil</h1></header>
       <div class="content">
-        <form id="form-profile" class="form">
-          <label>Tu nombre completo<input id="p-name" type="text" required></label>
-          <label>Saldo de la cuenta (demo)<input id="p-balance" type="text" inputmode="decimal" required></label>
-          <button class="btn-primary" type="submit">Guardar</button>
-          <button class="btn-ghost" type="button" id="btn-reset">Restablecer datos de demostración</button>
-          <button class="btn-ghost danger" type="button" id="btn-logout">Cerrar sesión</button>
+        <div class="profile-head">
+          <div class="avatar avatar-xl" id="p-avatar"></div>
+          <div><div class="c-alias" id="p-title"></div><div class="small muted">Cliente desde 2021</div></div>
+        </div>
+        <div class="menu">
+          <button data-sheet="sheet-datos"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg>Datos personales<span>›</span></button>
+          <button data-toast="Te enviamos un código para cambiar tu clave"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Seguridad y claves<span>›</span></button>
+          <label class="menu-switch"><svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4l2-2zM10 21h4"/></svg>Notificaciones push<input type="checkbox" id="sw-push" checked><i></i></label>
+          <label class="menu-switch"><svg viewBox="0 0 24 24"><path d="M12 11v3m-3.5-3.5a3.5 3.5 0 0 1 7 0V14M5.5 9a7 7 0 0 1 13 1.5V13"/></svg>Ingreso con huella<input type="checkbox" id="sw-bio" checked><i></i></label>
+          <button data-toast="Centro de ayuda: llama al 1800-ANDINO"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14M12 17h.01"/></svg>Ayuda<span>›</span></button>
+          <button id="btn-reset"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.7M4 4v4h4"/></svg>Restablecer datos de demostración<span>›</span></button>
+          <button id="btn-logout" class="danger"><svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg>Cerrar sesión</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PRODUCTOS (pestaña) ================= -->
+    <section class="screen tab" id="screen-products">
+      <header class="appbar"><h1 class="tab-title">Mis productos</h1></header>
+      <div class="content">
+        <div id="products-list"></div>
+        <h2 class="h2-sm mt">Mi tarjeta</h2>
+        <div class="debit-card" id="debit-card">
+          <div class="dc-top"><span class="dc-brand">andino</span><span class="dc-type">Débito</span></div>
+          <span class="chip-gold big"></span>
+          <div class="dc-num">•••• •••• •••• 8633</div>
+          <div class="dc-bottom"><span id="dc-name"></span><span class="mc-visa">VISA</span></div>
+          <div class="dc-locked">🔒 Bloqueada</div>
+        </div>
+        <label class="menu-switch card-lock"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Bloquear tarjeta temporalmente<input type="checkbox" id="sw-lock"><i></i></label>
+        <div class="section-head mt"><h2 class="h2-sm">Movimientos</h2></div>
+        <div class="chips" id="mov-filter">
+          <button class="chip active" data-f="all">Todos</button><button class="chip" data-f="in">Ingresos</button><button class="chip" data-f="out">Egresos</button>
+        </div>
+        <ul class="movements" id="all-movements"></ul>
+      </div>
+    </section>
+
+    <!-- ================= SOLICITUDES (pestaña) ================= -->
+    <section class="screen tab" id="screen-requests">
+      <header class="appbar"><h1 class="tab-title">Solicitudes</h1></header>
+      <div class="content">
+        <p class="muted">¿Qué quieres solicitar hoy?</p>
+        <div class="req-grid">
+          <button data-req="Tarjeta de crédito"><span>💳</span>Tarjeta de crédito</button>
+          <button data-req="Préstamo personal"><span>💵</span>Préstamo personal</button>
+          <button data-req="Cuenta de ahorros"><span>🐷</span>Cuenta de ahorros</button>
+          <button data-req="Certificado bancario"><span>📄</span>Certificado bancario</button>
+          <button data-req="Póliza de inversión"><span>📈</span>Póliza de inversión</button>
+          <button data-req="Seguro de vida"><span>🛡️</span>Seguros</button>
+        </div>
+        <h2 class="h2-sm mt">Mis solicitudes</h2>
+        <ul class="movements" id="req-list"></ul>
+      </div>
+    </section>
+
+    <!-- ================= BENEFICIOS (pestaña) ================= -->
+    <section class="screen tab" id="screen-benefits">
+      <header class="appbar"><h1 class="tab-title">Beneficios</h1></header>
+      <div class="content">
+        <div class="points">
+          <div><div class="small">Tus puntos</div><div class="points-num">1.250</div></div>
+          <button class="btn-pill" data-toast="Canje de puntos: próximamente">Canjear</button>
+        </div>
+        <div class="chips" id="benefit-filter">
+          <button class="chip active" data-b="all">Todos</button><button class="chip" data-b="food">Comida</button><button class="chip" data-b="fun">Entretenimiento</button><button class="chip" data-b="travel">Viajes</button>
+        </div>
+        <div class="benefit" data-cat="food"><span class="b-img" style="background:#fde68a">🍔</span><div><b>20% de descuento</b><p class="small muted">En restaurantes seleccionados pagando con tu Visa Débito.</p></div></div>
+        <div class="benefit" data-cat="fun"><span class="b-img" style="background:#c7d2fe">🎬</span><div><b>2x1 en cine</b><p class="small muted">Todos los martes en salas participantes.</p></div></div>
+        <div class="benefit" data-cat="food"><span class="b-img" style="background:#bbf7d0">🛒</span><div><b>Cashback del 5%</b><p class="small muted">En supermercados al pagar con QR andina!</p></div></div>
+        <div class="benefit" data-cat="travel"><span class="b-img" style="background:#fecaca">✈️</span><div><b>Hasta 6 meses sin intereses</b><p class="small muted">En agencias de viaje afiliadas.</p></div></div>
+        <div class="benefit" data-cat="fun"><span class="b-img" style="background:#fbcfe8">🎮</span><div><b>15% en videojuegos</b><p class="small muted">En tiendas en línea seleccionadas.</p></div></div>
+      </div>
+    </section>
+
+    <!-- ================= QR ================= -->
+    <section class="screen" id="screen-qr">
+      <header class="appbar"><button class="icon-btn" data-back aria-label="Atrás"><svg viewBox="0 0 24 24"><path d="M20 12H5m6-6-6 6 6 6"/></svg></button><h1>Escanear o mostrar QR</h1><div></div></header>
+      <div class="content">
+        <div class="seg"><button class="on" data-qrtab="scan">Escanear</button><button data-qrtab="show">Mi QR</button></div>
+        <div id="qr-scan">
+          <div class="scanner">
+            <video id="qr-video" playsinline muted></video>
+            <div class="scan-frame"><i></i><i></i><i></i><i></i><span class="scan-line"></span></div>
+            <p class="scan-msg" id="scan-msg">Apunta la cámara al código QR</p>
+          </div>
+          <button class="btn-ghost" id="btn-sim-scan">Simular escaneo (sin cámara)</button>
+        </div>
+        <div id="qr-show" hidden>
+          <div class="myqr-card">
+            <div class="c-alias" id="myqr-name"></div>
+            <div class="small muted" id="myqr-acc"></div>
+            <div class="qr big" id="myqr"></div>
+            <p class="small muted">Muestra este código para que te paguen</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PAGAR SERVICIOS ================= -->
+    <section class="screen" id="screen-services">
+      <header class="appbar"><button class="icon-btn" data-back aria-label="Atrás"><svg viewBox="0 0 24 24"><path d="M20 12H5m6-6-6 6 6 6"/></svg></button><h1>Pagar servicios</h1><div></div></header>
+      <div class="content">
+        <label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="search-service" type="search" placeholder="Buscar empresa o servicio" autocomplete="off"></label>
+        <div id="service-list"></div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-service-pay">
+      <header class="appbar"><button class="icon-btn" data-back aria-label="Atrás"><svg viewBox="0 0 24 24"><path d="M20 12H5m6-6-6 6 6 6"/></svg></button><h1 id="sp-title">Pagar</h1><div></div></header>
+      <div class="content">
+        <div class="recipient-card" id="sp-head"></div>
+        <form id="form-service" class="form">
+          <label>Código o número de contrato<input id="sp-code" type="text" inputmode="numeric" placeholder="Ej: 1234567" required></label>
+          <button class="btn-primary" type="submit" id="btn-sp-query"><span>Consultar</span></button>
+        </form>
+        <div id="sp-result" hidden>
+          <div class="debt">
+            <div class="small muted">Valor a pagar</div>
+            <div class="big" id="sp-amount"></div>
+            <dl class="receipt-details" id="sp-details"></dl>
+          </div>
+          <p class="error" id="sp-error"></p>
+          <button class="btn-primary" id="btn-sp-pay"><span>Pagar</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= RECARGAS ================= -->
+    <section class="screen" id="screen-recharge">
+      <header class="appbar"><button class="icon-btn" data-back aria-label="Atrás"><svg viewBox="0 0 24 24"><path d="M20 12H5m6-6-6 6 6 6"/></svg></button><h1>Recargar celular</h1><div></div></header>
+      <div class="content">
+        <p class="subtitle">Operadora</p>
+        <div class="chips" id="rc-ops">
+          <button class="chip active">Conecta</button><button class="chip">Movix</button><button class="chip">Celnet</button>
+        </div>
+        <form id="form-recharge" class="form">
+          <label>Número de celular<input id="rc-number" type="tel" inputmode="numeric" maxlength="10" placeholder="09XXXXXXXX" required></label>
+          <p class="subtitle">Monto</p>
+          <div class="amount-grid" id="rc-amounts">
+            <button type="button" data-v="1">$1</button><button type="button" data-v="3">$3</button><button type="button" data-v="5" class="on">$5</button>
+            <button type="button" data-v="10">$10</button><button type="button" data-v="15">$15</button><button type="button" data-v="20">$20</button>
+          </div>
+          <p class="error" id="rc-error"></p>
+          <button class="btn-primary" type="submit"><span>Recargar</span></button>
         </form>
       </div>
     </section>
+
+    <!-- ================= RETIRO SIN TARJETA ================= -->
+    <section class="screen" id="screen-withdraw">
+      <header class="appbar"><button class="icon-btn" data-back aria-label="Atrás"><svg viewBox="0 0 24 24"><path d="M20 12H5m6-6-6 6 6 6"/></svg></button><h1>Retiro sin tarjeta</h1><div></div></header>
+      <div class="content">
+        <div id="wd-form">
+          <p class="muted">Genera un código y retira en cualquier cajero Banco Andino sin usar tu tarjeta.</p>
+          <p class="subtitle mt">¿Cuánto quieres retirar?</p>
+          <div class="amount-grid" id="wd-amounts">
+            <button type="button" data-v="20" class="on">$20</button><button type="button" data-v="40">$40</button><button type="button" data-v="60">$60</button>
+            <button type="button" data-v="80">$80</button><button type="button" data-v="100">$100</button><button type="button" data-v="200">$200</button>
+          </div>
+          <p class="error" id="wd-error"></p>
+          <button class="btn-primary" id="btn-wd"><span>Generar código</span></button>
+        </div>
+        <div id="wd-result" hidden class="center">
+          <div class="receipt-check"><svg viewBox="0 0 24 24"><path d="m6.5 12.5 3.5 3.5 7.5-8"/></svg></div>
+          <p class="c-alias">Tu código de retiro</p>
+          <div class="wd-code" id="wd-code"></div>
+          <p class="muted">Monto: <b id="wd-amount"></b></p>
+          <p class="small muted">Válido por <b id="wd-timer">30:00</b> minutos</p>
+          <button class="btn-primary" data-home style="margin-top:24px"><span>Listo</span></button>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ================= MENÚ INFERIOR (pestañas) ================= -->
+    <nav class="bottom-nav" id="bottom-nav">
+      <button class="nav-item active" data-tab="home"><svg viewBox="0 0 24 24" class="fill"><path d="M3 11 12 3l9 8v10h-6v-6H9v6H3z"/></svg><span>Inicio</span></button>
+      <button class="nav-item" data-tab="products"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M16 11h5v4h-5a2 2 0 0 1 0-4zM6 6V4h12v2"/></svg><span>Productos</span></button>
+      <button class="nav-item" data-tab="requests"><svg viewBox="0 0 24 24"><path d="M3 9 12 4l9 5M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18"/></svg><span>Solicitudes</span></button>
+      <button class="nav-item" data-tab="benefits"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M3 12h18M7 8V5m4 3V5m4 3V5m4 3V5"/></svg><span>Beneficios</span></button>
+      <button class="nav-item" data-tab="profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/></svg><span>Perfil</span></button>
+    </nav>
+
+    <!-- Notificaciones -->
+    <div class="sheet-backdrop" id="sheet-notif">
+      <div class="sheet left">
+        <span class="sheet-grip"></span>
+        <h3>Notificaciones</h3>
+        <ul class="notif-list" id="notif-list"></ul>
+      </div>
+    </div>
+
+    <!-- Datos personales -->
+    <div class="sheet-backdrop" id="sheet-datos">
+      <div class="sheet left">
+        <span class="sheet-grip"></span>
+        <h3>Datos personales</h3>
+        <form id="form-profile" class="form">
+          <label>Tu nombre completo<input id="p-name" type="text" required></label>
+          <label>Saldo de la cuenta principal<input id="p-balance" type="text" inputmode="decimal" required></label>
+          <button class="btn-primary" type="submit"><span>Guardar</span></button>
+        </form>
+      </div>
+    </div>
 
     <!-- Clave de seguridad -->
     <div class="sheet-backdrop" id="pin-sheet">
@@ -366,6 +556,8 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="js/data.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/funciones.js"></script>
 </body>
 </html>

@@ -27,8 +27,35 @@ const ESTADO_INICIAL = {
     { id: 3, alias: "Vale",  ...DIRECTORIO[2] },
     { id: 4, alias: "Mateo", ...DIRECTORIO[3] },
   ],
+  ahorro: 1250.00,
+  ahorroNumero: "2200711204",
+  tarjetaBloqueada: false,
   movimientos: [
     { tipo: "in",  titulo: "Depósito de nómina", monto: 450.00, fecha: "2026-11-01T09:12:00" },
-    { tipo: "out", titulo: "Pago de servicios",  monto: 26.61,  fecha: "2026-11-03T18:40:00" },
+    { tipo: "out", titulo: "Pago Electricidad",  monto: 26.61,  fecha: "2026-11-03T18:40:00" },
+    { tipo: "out", titulo: "Pago QR Cafetería Central", monto: 3.50, fecha: "2026-10-29T08:15:00" },
+    { tipo: "in",  titulo: "Transferencia de Sofía Ramírez", monto: 20.00, fecha: "2026-10-27T13:02:00" },
+  ],
+  solicitudes: [
+    { nombre: "Certificado bancario", fecha: "2026-10-20T10:00:00", estado: "Aprobada" },
+  ],
+  notificaciones: [
+    { icono: "💸", titulo: "Recibiste $20,00", texto: "Sofía Ramírez te transfirió dinero.", fecha: "2026-10-27T13:02:00", leida: false },
+    { icono: "🎁", titulo: "¡Nuevo beneficio!", texto: "2x1 en cine todos los martes con tu Visa Débito.", fecha: "2026-11-02T09:00:00", leida: false },
+    { icono: "🔐", titulo: "Inicio de sesión", texto: "Ingresaste a tu Banca Móvil desde un nuevo dispositivo.", fecha: "2026-11-05T19:30:00", leida: false },
   ],
 };
+
+/* Empresas para "Pagar servicios" (nombres ficticios) */
+const SERVICIOS = [
+  { nombre: "Empresa Eléctrica Andina", cat: "Luz",        icono: "💡", color: "#fef3c7" },
+  { nombre: "Agua Potable Municipal",   cat: "Agua",       icono: "💧", color: "#dbeafe" },
+  { nombre: "FibraNet Hogar",           cat: "Internet",   icono: "🌐", color: "#e0e7ff" },
+  { nombre: "TeleAndes Fija",           cat: "Teléfono",   icono: "☎️", color: "#dcfce7" },
+  { nombre: "Universidad del Valle",    cat: "Educación",  icono: "🎓", color: "#fce7f3" },
+  { nombre: "Servicio de Rentas",       cat: "Impuestos",  icono: "🏛️", color: "#f3f4f6" },
+  { nombre: "TV Cable Andes",           cat: "Televisión", icono: "📺", color: "#ffedd5" },
+];
+
+/* Comercio que aparece al "Simular escaneo" de un QR */
+const COMERCIO_DEMO = { nombre: "Cafetería Central", banco: "Banco Andino", tipo: "Cta. Corriente", cuenta: "2205550198", foto: null, comercio: true };

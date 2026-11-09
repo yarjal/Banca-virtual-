@@ -17,7 +17,7 @@ const vibrar = (ms = 8) => { try { navigator.vibrate && navigator.vibrate(ms); }
 function cargar() {
   try {
     const g = JSON.parse(localStorage.getItem(CLAVE));
-    if (g && g.contactos) return g;
+    if (g && g.contactos) return { ...structuredClone(ESTADO_INICIAL), ...g };
   } catch (e) {}
   return structuredClone(ESTADO_INICIAL);
 }
@@ -74,29 +74,80 @@ function ir(nombre, { reemplazar = false, efecto = "" } = {}) {
   sig.classList.add("active");
   window.scrollTo(0, 0);
   document.querySelector(".phone").scrollTop = 0;
+  // Menú inferior: solo en las pestañas principales
+  const esTab = sig.classList.contains("tab");
+  $("#bottom-nav").classList.toggle("show", esTab);
+  document.querySelectorAll(".nav-item").forEach((n) => n.classList.toggle("active", n.dataset.tab === nombre));
+  if (nombre !== "qr") detenerCamara();
   const render = { home: renderInicio, transfer: renderContactos, "new-account": resetNueva, amount: renderMonto,
-                   confirm: renderConfirmar, receive: renderRecibir, profile: renderPerfil }[nombre];
+                   confirm: renderConfirmar, receive: renderRecibir, profile: renderPerfil, products: renderProductos,
+                   requests: renderSolicitudes, qr: abrirQR, services: renderServicios, recharge: resetRecarga,
+                   withdraw: resetRetiro }[nombre];
   if (render) render();
 }
 function atras() { ir(historial.pop() || "home", { reemplazar: true, efecto: "back" }); }
 function inicio() { historial = []; ir("home", { reemplazar: true, efecto: "back" }); }
+function irTab(tab) { historial = []; ir(tab, { reemplazar: true, efecto: "fade" }); }
 
 /* ---------- Inicio ---------- */
+function productos() {
+  return [
+    { cat: "Cuentas", nombre: estado.cuentaAlias, mask: "******" + estado.cuentaNumero.slice(-4), saldo: estado.saldo, tipo: "Cuenta<br>Transaccional", fav: true },
+    { cat: "Cuentas", nombre: "AHORRO" + estado.ahorroNumero.slice(-4), mask: "******" + estado.ahorroNumero.slice(-4), saldo: estado.ahorro, tipo: "Cuenta de<br>Ahorros" },
+    { cat: "Tarjetas", nombre: "VISA DÉBITO", mask: "•••• 8633", saldo: estado.saldo, tipo: estado.tarjetaBloqueada ? "<b class='lock-txt'>Bloqueada</b>" : "Tarjeta de<br>Débito", etiqueta: "Disponible" },
+  ];
+}
+function tarjetaProducto(p) {
+  return `<div class="account-card">
+      <div class="account-top">
+        <div><div class="account-name">${p.nombre}</div><div class="account-mask">${p.mask}</div></div>
+        ${p.fav ? `<div class="fav"><span class="star">★</span> Cta. favorita</div>` : ""}
+      </div>
+      <div class="account-bottom">
+        <div>
+          <div class="small muted">${p.etiqueta || "Saldo disponible"}</div>
+          <div class="balance"><span>${saldoVisible ? dinero(p.saldo) : "$ ••••"}</span>
+            <button class="eye" data-eye aria-label="Mostrar u ocultar saldo">
+              <svg viewBox="0 0 24 24">${saldoVisible ? '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>' : '<path d="M3 3l18 18M10.6 6.1A9.8 9.8 0 0 1 12 6c6.5 0 10 6 10 6a17 17 0 0 1-3.2 3.8M6.6 7.6A16.7 16.7 0 0 0 2 12s3.5 6 10 6a9.4 9.4 0 0 0 4.4-1.1"/>'}</svg>
+            </button>
+          </div>
+        </div>
+        <div class="small muted right">${p.tipo}</div>
+      </div>
+    </div>`;
+}
+let filtroProductos = "Todos";
 function renderInicio() {
-  $("#acc-name").textContent = estado.cuentaAlias;
-  $("#acc-mask").textContent = "******" + estado.cuentaNumero.slice(-4);
-  $("#balance").textContent = saldoVisible ? dinero(estado.saldo) : "$ ••••";
+  const track = $("#products-track");
+  const lista = productos().filter((p) => filtroProductos === "Todos" || p.cat === filtroProductos);
+  track.innerHTML = lista.length ? lista.map(tarjetaProducto).join("")
+    : `<div class="account-card empty-card"><b>No tienes ${filtroProductos.toLowerCase()}</b><p class="small muted">Solicítalo en minutos desde la app.</p><a href="#" class="link" data-tab="requests">Solicitar ahora</a></div>`;
+  track.scrollLeft = 0;
+  $("#products-pager").textContent = `1 de ${Math.max(lista.length, 1)}`;
+  const n = estado.notificaciones.filter((x) => !x.leida).length;
+  $("#notif-badge").textContent = n;
+  $("#notif-badge").style.display = n ? "" : "none";
   const ul = $("#movements");
-  const movs = [...estado.movimientos].sort((a, b) => b.fecha.localeCompare(a.fecha)).slice(0, 6);
-  ul.innerHTML = movs.length ? movs.map((m) => `
+  const movs = [...estado.movimientos].sort((a, b) => b.fecha.localeCompare(a.fecha)).slice(0, 4);
+  ul.innerHTML = movs.length ? movs.map(itemMovimiento).join("") : `<li class="empty">Aún no tienes movimientos</li>`;
+}
+function iconoMovimiento(m) {
+  if (m.tipo !== "out") return `<div class="avatar in-avatar">+</div>`;
+  const t = m.titulo;
+  if (t.startsWith("Transferencia a ")) return avatarHTML({ nombre: t.slice(16), foto: m.foto });
+  const ico = t.startsWith("Pago QR") ? "🛍️" : t.startsWith("Recarga") ? "📱" : t.startsWith("Retiro") ? "🏧" : "🧾";
+  return `<div class="avatar mv-ico">${ico}</div>`;
+}
+function itemMovimiento(m) {
+  return `
     <li>
-      ${m.foto !== undefined || m.tipo === "out" ? avatarHTML({ nombre: m.titulo, foto: m.foto }) : `<div class="avatar" style="background:#dcfce7;color:#166534">+</div>`}
+      ${iconoMovimiento(m)}
       <div class="mv-info">
         <div class="mv-title">${escapar(m.titulo)}</div>
-        <div class="small muted">${new Date(m.fecha).toLocaleDateString("es-EC", { day: "2-digit", month: "short" })}</div>
+        <div class="small muted">${new Date(m.fecha).toLocaleDateString("es-EC", { day: "2-digit", month: "short" })} · ${new Date(m.fecha).toLocaleTimeString("es-EC", { hour: "2-digit", minute: "2-digit" })}</div>
       </div>
       <div class="mv-amt ${m.tipo === "out" ? "neg" : "pos"}">${m.tipo === "out" ? "-" : "+"}${dinero(m.monto)}</div>
-    </li>`).join("") : `<li class="empty">Aún no tienes movimientos</li>`;
+    </li>`;
 }
 
 /* ---------- Transferir a: lista de contactos ---------- */
@@ -205,35 +256,44 @@ function renderConfirmar() {
     ${transferencia.descripcion ? `<div class="small">"${escapar(transferencia.descripcion)}"</div>` : ""}`;
 }
 function ejecutarTransferencia() {
-  const ahora = new Date();
-  const comprobante = String(Math.floor(100000000 + Math.random() * 900000000));
-  estado.saldo = Math.round((estado.saldo - transferencia.monto) * 100) / 100;
-  estado.movimientos.push({
-    tipo: "out", titulo: "Transferencia a " + destinatario.nombre, monto: transferencia.monto,
-    fecha: ahora.toISOString(), foto: destinatario.foto || null,
+  const c = destinatario;
+  const desc = transferencia.descripcion;
+  finalizarOperacion({
+    monto: transferencia.monto,
+    titulo: c.comercio ? "¡Pago exitoso con andina!" : "¡Transferencia exitosa!",
+    linea: "A " + apellidosPrimero(c.nombre),
+    movimiento: (c.comercio ? "Pago QR " : "Transferencia a ") + c.nombre,
+    foto: c.foto || null,
+    detalles: [["Cuenta destino", enmascarar(c.cuenta)], ["Banco destino", c.banco], ["Cuenta origen", enmascarar(estado.cuentaNumero)]]
+      .concat(desc ? [["Descripción", desc]] : []),
+    otraVez: ["transfer", "Volver a<br>transferir"],
   });
+}
+// Descuenta el saldo, guarda el movimiento y muestra el comprobante
+function finalizarOperacion(op) {
+  const ahora = new Date();
+  const numero = String(Math.floor(100000000 + Math.random() * 900000000));
+  estado.saldo = Math.round((estado.saldo - op.monto) * 100) / 100;
+  estado.movimientos.push({ tipo: "out", titulo: op.movimiento, monto: op.monto, fecha: ahora.toISOString(), foto: op.foto || null });
   guardar();
-  renderComprobante(ahora, comprobante);
+  renderComprobante(op, ahora, numero);
   historial = [];
   ir("receipt", { reemplazar: true, efecto: "fade" });
 }
 
-/* ---------- Comprobante (con la foto del destinatario) ---------- */
-function renderComprobante(fecha, numero) {
-  const c = destinatario;
-  $("#r-amount").textContent = dinero(transferencia.monto).replace("$", "$ ");
-  $("#r-to").textContent = "A " + apellidosPrimero(c.nombre);
+/* ---------- Comprobante ---------- */
+function renderComprobante(op, fecha, numero) {
+  $("#r-title").textContent = op.titulo;
+  $("#r-amount").textContent = dinero(op.monto).replace("$", "$ ");
+  $("#r-to").textContent = op.linea;
   $("#r-date").textContent = "El " + fechaLarga(fecha);
   $("#r-from").textContent = "De " + estado.usuario;
-  $("#r-dest").textContent = enmascarar(c.cuenta);
-  $("#r-bank").textContent = c.banco;
-  $("#r-origin").textContent = enmascarar(estado.cuentaNumero);
-  $("#r-number").textContent = numero;
-  $("#r-desc-row").style.display = transferencia.descripcion ? "" : "none";
-  $("#r-desc").textContent = transferencia.descripcion;
-  dibujarQR("#r-qr", `DEMO|Comprobante ${numero}|${dinero(transferencia.monto)}|${c.nombre}|${fecha.toISOString()}`);
-  renderComprobante.texto =
-    `Comprobante (DEMO) N° ${numero}\n${dinero(transferencia.monto)} a ${c.nombre}\n${fechaLarga(fecha)}\nBanco destino: ${c.banco}`;
+  $("#r-details").innerHTML = op.detalles.concat([["N° de comprobante", numero]])
+    .map(([k, v]) => `<div><dt>${escapar(k)}</dt><dd>${escapar(v)}</dd></div>`).join("");
+  $("#r-again").dataset.go = op.otraVez[0];
+  $("#r-again-text").innerHTML = op.otraVez[1];
+  dibujarQR("#r-qr", `DEMO|Comprobante ${numero}|${dinero(op.monto)}|${op.linea}|${fecha.toISOString()}`);
+  renderComprobante.texto = `Comprobante N° ${numero}\n${op.titulo}\n${dinero(op.monto)} ${op.linea}\n${fechaLarga(fecha)}`;
 }
 // Como en los comprobantes reales: "Apellido Apellido Nombre(s)"
 function apellidosPrimero(nombre) {
@@ -263,30 +323,36 @@ function renderRecibir() {
   dibujarQR("#my-qr", `DEMO|${estado.usuario}|${estado.cuentaNumero}|Banco Andino`);
 }
 function renderPerfil() {
+  $("#p-avatar").textContent = iniciales(estado.usuario);
+  $("#p-title").textContent = estado.usuario;
   $("#p-name").value = estado.usuario;
   $("#p-balance").value = estado.saldo.toFixed(2).replace(".", ",");
 }
 
 /* ===================== Eventos ===================== */
 document.addEventListener("click", (e) => {
-  const t = e.target.closest("[data-go],[data-back],[data-home],[data-toast],[data-id],[data-sug],.chip");
+  const t = e.target.closest("[data-tab],[data-sheet],[data-eye],[data-go],[data-back],[data-home],[data-toast],[data-id],[data-sug],.chip");
   if (!t) return;
-  if (t.dataset.go) { e.preventDefault(); ir(t.dataset.go); }
+  if (t.dataset.tab) { e.preventDefault(); irTab(t.dataset.tab); }
+  else if (t.dataset.sheet) abrirHoja(t.dataset.sheet);
+  else if (t.hasAttribute("data-eye")) { saldoVisible = !saldoVisible; const x = $("#products-track").scrollLeft; renderInicio(); $("#products-track").scrollLeft = x; }
+  else if (t.dataset.go) { e.preventDefault(); ir(t.dataset.go); }
   else if (t.hasAttribute("data-back")) atras();
   else if (t.hasAttribute("data-home")) inicio();
   else if (t.dataset.toast) { e.preventDefault(); toast(t.dataset.toast); }
   else if (t.dataset.id) { destinatario = estado.contactos.find((c) => c.id == t.dataset.id); ir("amount"); }
   else if (t.dataset.sug !== undefined) elegirSugerencia(+t.dataset.sug);
   else if (t.classList.contains("chip")) {
-    document.querySelectorAll(".chip").forEach((c) => c.classList.remove("active"));
+    t.parentNode.querySelectorAll(".chip").forEach((c) => c.classList.remove("active"));
     t.classList.add("active");
+    if (t.parentNode.id === "home-chips") { filtroProductos = t.textContent.trim(); renderInicio(); }
   }
 });
 
 async function entrar() {
   historial = [];
   ir("home", { reemplazar: true, efecto: "fade" });
-  const card = $("#account-card");
+  const card = $("#products-track");
   card.classList.add("skeleton");
   await esperar(700);
   card.classList.remove("skeleton");
@@ -318,7 +384,6 @@ window.addEventListener("load", () => setTimeout(() => $("#splash").classList.ad
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }
-$("#toggle-balance").addEventListener("click", () => { saldoVisible = !saldoVisible; renderInicio(); });
 $("#search-contact").addEventListener("input", renderContactos);
 
 $("#new-name").addEventListener("input", actualizarVistaPrevia);
@@ -383,9 +448,11 @@ $("#form-amount").addEventListener("submit", (e) => {
   transferencia = { monto, descripcion: $("#description").value.trim() };
   ir("confirm");
 });
-$("#btn-confirm").addEventListener("click", abrirClave);
+$("#btn-confirm").addEventListener("click", () => pedirClave(ejecutarTransferencia));
 
 /* ---------- Clave de seguridad + procesando ---------- */
+let alConfirmar = null;
+function pedirClave(fn) { alConfirmar = fn; abrirClave(); }
 function abrirClave() { pin = ""; pintarPin(); $("#pin-error").textContent = ""; $("#pin-sheet").classList.add("open"); }
 function cerrarClave() { $("#pin-sheet").classList.remove("open"); }
 function pintarPin() { document.querySelectorAll("#pin-dots i").forEach((d, i) => d.classList.toggle("on", i < pin.length)); }
@@ -401,9 +468,9 @@ $("#keypad").addEventListener("click", async (e) => {
   if (pin.length === 6) {
     await esperar(250);
     cerrarClave();
-    await procesando("Estamos procesando tu transferencia", 1800);
+    await procesando("Estamos procesando tu transacción", 1800);
     vibrar(30);
-    ejecutarTransferencia();
+    if (alConfirmar) alConfirmar();
   }
 });
 async function procesando(texto, ms) {
@@ -422,7 +489,7 @@ $("#form-profile").addEventListener("submit", (e) => {
   e.preventDefault();
   estado.usuario = $("#p-name").value.trim() || estado.usuario;
   estado.saldo = leerMonto($("#p-balance").value);
-  guardar(); toast("Perfil actualizado"); inicio();
+  guardar(); cerrarHoja("sheet-datos"); toast("Datos actualizados"); renderPerfil();
 });
 $("#btn-reset").addEventListener("click", () => {
   estado = structuredClone(ESTADO_INICIAL); guardar(); toast("Datos restablecidos"); inicio();

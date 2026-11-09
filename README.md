@@ -24,6 +24,17 @@ En la computadora la app se muestra dentro de un marco de celular.
 - Antes de transferir se pide una **clave de seguridad de 6 dígitos** con teclado numérico y luego aparece "Procesando…".
 - Vibración ligera al tocar (en celulares que lo permiten).
 
+## Funciones
+- **Inicio deslizable**: carrusel de promociones automático, tarjetas de productos que se deslizan ("1 de 3"),
+  filtros Cuentas/Tarjetas/Préstamos y accesos rápidos que se deslizan hacia los lados.
+- **Notificaciones** en una hoja inferior (se cierra deslizándola hacia abajo).
+- **Transferir** con foto del destinatario, **Recibir dinero**.
+- **Escanear o mostrar QR**: usa la cámara del celular; con "Mi QR" otra persona puede escanearte. También hay "Simular escaneo".
+- **Pagar servicios** (luz, agua, internet, universidad…), **Recargar celular** y **Retiro sin tarjeta** con código y temporizador.
+- Menú inferior con **Productos** (cuentas, tarjeta con bloqueo temporal, movimientos filtrables), **Solicitudes**,
+  **Beneficios** y **Perfil**.
+- Todas las operaciones piden clave de 6 dígitos y generan su comprobante.
+
 ## Pantallas
 1. **Inicio**: saldo (con ojo para ocultarlo), Mis productos, ¿Qué quieres hacer?, últimos movimientos y barra inferior.
 2. **Transferir a**: buscador de contactos (con su foto), Nueva cuenta / Nuevo celular / Al Exterior y Mis contactos agrupados por letra.
@@ -44,6 +55,7 @@ index.html        pantallas
 css/styles.css    diseño
 js/data.js        personas, contactos y saldo inicial
 js/app.js         lógica (navegación, búsqueda con foto, transferencias, comprobante)
+js/funciones.js   carruseles, notificaciones, pestañas, QR, servicios, recargas y retiro
 manifest.json     datos para instalarla como app
 sw.js             service worker (instalación y uso sin internet)
 img/contactos/    fotos de perfil
