@@ -285,3 +285,11 @@ $("#sw-bio").addEventListener("change", (e) => {
   $("#btn-bio").hidden = !e.target.checked;
   toast(e.target.checked ? "Ingreso con huella activado" : "Ingreso con huella desactivado");
 });
+
+/* ---------- En computadora: el marco del celular se ajusta a la altura de la pantalla ---------- */
+function ajustarMarco() {
+  const ph = document.querySelector(".phone");
+  ph.style.zoom = innerWidth >= 600 ? Math.min(1, (innerHeight - 24) / 884) : "";
+}
+addEventListener("resize", ajustarMarco);
+ajustarMarco();
