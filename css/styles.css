@@ -555,3 +555,9 @@ h2,.h2-sm,.subtitle{font-weight:600}
 @keyframes float{50%{transform:translateY(-10px)}}
 .onb-dots{margin:16px 0 20px!important}
 [hidden]{display:none!important}
+/* Deslizador: área táctil grande y pista visual */
+.slide-confirm,.slide-confirm *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.slide-knob.dragging{transform-origin:center;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.slide-confirm.hint .slide-knob{animation:nudge .7s ease}
+@keyframes nudge{30%{margin-left:26px}60%{margin-left:0}80%{margin-left:10px}}
+.products-track,.carousel,.onb-track{touch-action:pan-x pan-y}

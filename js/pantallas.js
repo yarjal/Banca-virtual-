@@ -44,7 +44,7 @@ function sacudir(sel) { const e = $(sel); e.classList.remove("shake"); void e.of
 /* ---------- "Desliza para transferir" ---------- */
 function crearDeslizador(sel, alCompletar) {
   const root = $(sel), knob = root.querySelector(".slide-knob"), fill = root.querySelector(".slide-fill");
-  let x0 = null, x = 0, maxX = 0, listo = false;
+  let x0 = null, x = 0, maxX = 0, listo = false, movio = false;
   const poner = (v, anim) => {
     knob.style.transition = fill.style.transition = anim ? "transform .3s cubic-bezier(.2,.8,.2,1), width .3s" : "none";
     knob.style.transform = `translateX(${v}px)`;
@@ -52,32 +52,60 @@ function crearDeslizador(sel, alCompletar) {
     root.querySelector(".slide-text").style.opacity = 1 - v / (maxX || 1);
   };
   const reiniciar = () => { listo = false; x = 0; root.classList.remove("done"); poner(0, true); };
-  knob.addEventListener("pointerdown", (e) => {
-    if (listo) return;
-    maxX = root.clientWidth - knob.offsetWidth - 8;
-    x0 = e.clientX - x; knob.setPointerCapture(e.pointerId);
-  });
-  knob.addEventListener("pointermove", (e) => {
-    if (x0 === null) return;
-    x = Math.max(0, Math.min(maxX, e.clientX - x0)); poner(x);
-  });
-  const soltar = async () => {
-    if (x0 === null) return;
-    x0 = null;
-    if (x > maxX * 0.85) {
-      listo = true; poner(maxX, true); root.classList.add("done"); vibrar(30);
-      const ok = await alCompletar();
-      if (ok === false) setTimeout(reiniciar, 250);
-    } else { x = 0; poner(0, true); }
+  const completar = async () => {
+    listo = true; poner(maxX, true); root.classList.add("done"); vibrar(30);
+    if ((await alCompletar()) === false) setTimeout(reiniciar, 250);
   };
-  knob.addEventListener("pointerup", soltar);
-  knob.addEventListener("pointercancel", soltar);
-  // Accesible con teclado: Enter sobre el botón
-  knob.addEventListener("keydown", async (e) => {
+  // Inicio, movimiento y fin del arrastre (sirve para dedo y mouse)
+  const empezar = (cx) => {
+    if (listo) return false;
+    maxX = root.clientWidth - knob.offsetWidth - 8;
+    x0 = cx - x; movio = false;
+    knob.classList.add("dragging");
+    return true;
+  };
+  const mover = (cx) => {
+    if (x0 === null) return;
+    x = Math.max(0, Math.min(maxX, cx - x0));
+    if (x > 3) movio = true;
+    poner(x);
+  };
+  const terminar = () => {
+    if (x0 === null) return;
+    x0 = null; knob.classList.remove("dragging");
+    if (x > maxX * 0.8) return completar();
+    x = 0; poner(0, true);
+    if (!movio) {                                  // solo tocó: mostrar cómo se usa
+      root.classList.remove("hint"); void root.offsetWidth; root.classList.add("hint");
+      toast("Desliza el círculo amarillo hacia la derecha");
+    }
+  };
+  // Táctil: eventos touch directos (los celulares no cancelan el gesto)
+  root.addEventListener("touchstart", (e) => {
+    const t = e.touches[0], kb = knob.getBoundingClientRect();
+    if (t.clientX > kb.right + 30) return;          // hay que empezar desde el círculo
+    if (empezar(t.clientX)) e.preventDefault();
+  }, { passive: false });
+  root.addEventListener("touchmove", (e) => {
+    if (x0 === null) return;
+    e.preventDefault();                             // que la pantalla no se mueva mientras desliza
+    mover(e.touches[0].clientX);
+  }, { passive: false });
+  root.addEventListener("touchend", terminar);
+  root.addEventListener("touchcancel", terminar);
+  // Mouse (computadora)
+  knob.addEventListener("mousedown", (e) => {
+    if (!empezar(e.clientX)) return;
+    e.preventDefault();
+    const mm = (ev) => mover(ev.clientX);
+    const mu = () => { removeEventListener("mousemove", mm); removeEventListener("mouseup", mu); terminar(); };
+    addEventListener("mousemove", mm); addEventListener("mouseup", mu);
+  });
+  // Teclado: Enter sobre el círculo
+  knob.addEventListener("keydown", (e) => {
     if (e.key !== "Enter" || listo) return;
     maxX = root.clientWidth - knob.offsetWidth - 8;
-    listo = true; poner(maxX, true); root.classList.add("done");
-    if ((await alCompletar()) === false) setTimeout(reiniciar, 250);
+    completar();
   });
   return { reiniciar };
 }
