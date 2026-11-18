@@ -24,6 +24,16 @@ En la computadora la app se muestra dentro de un marco de celular.
 - Antes de transferir se pide una **clave de seguridad de 6 dígitos** con teclado numérico y luego aparece "Procesando…".
 - Vibración ligera al tocar (en celulares que lo permiten).
 
+## Basado en la app real (videos de referencia)
+- Botones principales amarillos, títulos centrados, pantalla de **bienvenida** la primera vez.
+- Monto con **teclado propio de la app** y confirmación con **"Desliza para transferir"**.
+- **Transferir entre mis cuentas** (Desde / Hacia con botón para intercambiar), costo de $0,41 a otros bancos.
+- **Monto a retirar** (números que terminen en 0, hasta $300), **Pagar tarjetas** (total, mínimo u otro monto).
+- **Nuevo contacto** con pestañas Banco Andino / Otros bancos, tipo de identificación y tipo de cuenta.
+- **Montos máximos transaccionales** (Banca Web / Banca Móvil) en Perfil; se respetan al transferir.
+- Tarjetas de productos que asoman la siguiente, flechas "‹ 1 de 4 ›", promoción con botón cerrar
+  y 6 accesos con etiqueta "NUEVO".
+
 ## Funciones
 - **Inicio deslizable**: carrusel de promociones automático, tarjetas de productos que se deslizan ("1 de 3"),
   filtros Cuentas/Tarjetas/Préstamos y accesos rápidos que se deslizan hacia los lados.
@@ -55,7 +65,8 @@ index.html        pantallas
 css/styles.css    diseño
 js/data.js        personas, contactos y saldo inicial
 js/app.js         lógica (navegación, búsqueda con foto, transferencias, comprobante)
-js/funciones.js   carruseles, notificaciones, pestañas, QR, servicios, recargas y retiro
+js/funciones.js   carruseles, notificaciones, pestañas, QR, servicios y recargas
+js/pantallas.js   teclado numérico, deslizar para transferir, mis cuentas, retiro, tarjetas, límites, bienvenida
 manifest.json     datos para instalarla como app
 sw.js             service worker (instalación y uso sin internet)
 img/contactos/    fotos de perfil

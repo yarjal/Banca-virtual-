@@ -413,3 +413,145 @@ button:active{transform:scale(.96)}
 #screen-home .account-card{padding:12px 18px}
 #screen-home .account-top .account-mask{font-size:14px}
 @media (min-width:600px){ .phone{height:860px;max-height:none} body{padding:12px 0} }
+
+/* =================== v3: estilo de la app real (según videos) =================== */
+/* Botón principal amarillo como en la app */
+.btn-primary{background:var(--yellow);color:#1f2a44;border-radius:8px;font-weight:600;letter-spacing:.1px;box-shadow:0 2px 0 rgba(0,0,0,.06)}
+.btn-primary:active{filter:brightness(.95)}
+.btn-primary.loading::after{border-color:rgba(31,42,68,.25);border-top-color:#1f2a44}
+.appbar{border-bottom:1px solid #eef1f6;padding-bottom:12px}
+.appbar h1{text-align:center;font-size:17px;font-weight:600;color:#1f2a44}
+.appbar>div:last-child{min-width:40px}
+.tab-title{text-align:left!important}
+h2,.h2-sm,.subtitle{font-weight:600}
+.c-alias{font-weight:600}
+.help-btn{display:flex;align-items:center;gap:5px;color:#1f2a44;font-size:14px;font-weight:600;padding:6px 4px}
+.help-btn svg{width:20px;height:20px}
+
+/* Promoción con botón cerrar */
+.promo-wrap{position:relative;overflow:hidden;transition:height .35s ease,opacity .3s;border-radius:12px}
+.promo-wrap.closing{opacity:0}
+.promo-wrap .promo{border-left:5px solid var(--yellow)}
+.promo-close{position:absolute;top:4px;right:6px;z-index:3;width:26px;height:26px;border-radius:50%;font-size:20px;line-height:1;color:#64748b}
+#screen-home .promo-text{padding-right:28px}
+
+/* Productos: la siguiente tarjeta asoma */
+.products-track .account-card{flex:0 0 86%}
+.products-track .account-card:only-child{flex-basis:100%}
+.account-card.dark{background:linear-gradient(135deg,#1f2937,#0b1220);color:#fff;border-color:#0b1220}
+.account-card.dark .account-name,.account-card.dark .balance{color:#fff}
+.account-card.dark .muted,.account-card.dark .account-mask{color:#cbd5e1}
+.account-card.dark .eye{color:#93c5fd}
+.pager-row{display:flex;align-items:center;justify-content:center;gap:10px}
+.pg-arrow{width:28px;height:28px;border-radius:50%;font-size:22px;line-height:1;color:var(--navy);display:grid;place-items:center}
+.pg-arrow:active{background:#e3e9f6}
+
+/* ¿Qué quieres hacer? 2 filas x 3 */
+.actions-grid6{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+.actions-grid6 .action-tile{position:relative}
+.tag-new{position:absolute;top:8px;right:8px;background:#16a34a;color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:8px;letter-spacing:.3px}
+#screen-home .actions-grid6 .action-tile{min-height:92px}
+.nav-item{position:relative}
+.nav-dot{position:absolute;top:2px;left:calc(50% + 10px);width:8px;height:8px;border-radius:50%;background:#16a34a;border:2px solid #fff}
+
+/* Pantallas de monto */
+.amount-screen{display:flex;flex-direction:column;min-height:calc(100vh - 70px);padding-bottom:22px!important}
+.to-mini{display:flex;align-items:center;gap:12px;padding:6px 0 4px}
+.to-mini .avatar{width:44px;height:44px}
+.amt{display:flex;align-items:center;justify-content:center;margin:18px 0 10px;border-bottom:1px solid var(--line);padding-bottom:8px}
+.amt-val{font-size:46px;font-weight:400;color:#1f2430;letter-spacing:-.5px}
+.amt.empty .amt-val{color:#9ca3af}
+.amt-val.bump{animation:bump .18s ease}
+@keyframes bump{50%{transform:scale(1.06)}}
+.caret{width:2px;height:44px;background:#1f2430;margin-left:3px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.shake{animation:shake .35s}
+.from-acc{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin:4px auto 6px;color:var(--navy)}
+.chev-d{color:var(--blue);font-weight:800}
+.add-motivo{color:var(--blue);font-weight:600;font-size:14px;margin:4px auto}
+.motivo-input{border:0;border-bottom:1.5px solid var(--blue);background:none;text-align:center;padding:8px;font-size:15px;outline:none;margin:2px 20px}
+.cost-info{display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;color:#475569;margin-top:6px;text-align:center}
+.i-dot{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:#64748b;color:#fff;font-size:10px;font-weight:800;font-style:normal;flex-shrink:0}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:auto;padding-top:8px}
+.numpad button{height:54px;font-size:24px;font-weight:400;color:#1f2430;border-radius:12px}
+.numpad button:active{background:#e8edf5}
+.numpad .np-text{font-size:14px;color:#475569}
+
+/* Desliza para transferir */
+.slide-confirm{position:relative;height:56px;border-radius:30px;background:#eef1f6;margin-top:12px;overflow:hidden;user-select:none;touch-action:none}
+.slide-text{position:absolute;inset:0;display:grid;place-items:center;font-weight:600;color:#334155;padding-left:40px;
+  background:linear-gradient(90deg,#334155 0%,#334155 40%,#94a3b8 50%,#334155 60%,#334155 100%);background-size:200% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 2.4s linear infinite}
+@keyframes sheen{to{background-position:-200% 0}}
+.slide-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(255,221,0,.35);border-radius:30px}
+.slide-knob{position:absolute;left:4px;top:4px;width:48px;height:48px;border-radius:50%;background:var(--yellow);color:#1f2a44;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.18);cursor:grab;touch-action:none}
+.slide-knob:active{cursor:grabbing;transform:none}
+.slide-knob svg{stroke-width:2.4}
+.slide-confirm.done .slide-knob{background:#16a34a;color:#fff}
+
+/* Entre mis cuentas */
+.own-row{display:flex;align-items:flex-end;gap:8px;margin-top:6px}
+.own-box{flex:1;min-width:0}
+.own-lbl{font-size:13px;color:#475569;display:block;margin-bottom:4px}
+.own-acc{display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-height:72px}
+.own-acc.flip{animation:flip .35s ease}
+@keyframes flip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+.swap{width:42px;height:42px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;margin-bottom:15px;flex-shrink:0}
+.swap.spin svg{animation:spin180 .35s ease}
+@keyframes spin180{to{transform:rotate(180deg)}}
+
+/* Retiro */
+.wd-who{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:6px}
+.wd-av{width:54px;height:54px;background:#dbeafe!important;color:#60a5fa!important}
+.wd-av svg{width:30px;height:30px}
+#wd-form{display:flex;flex-direction:column;flex:1}
+#wd-form .btn-primary{margin-top:14px}
+.wd-steps{text-align:left;margin:14px 6px 0 26px;color:#475569;line-height:1.7}
+
+/* Pagar tarjetas */
+.credit-card{position:relative;aspect-ratio:1.586;border-radius:16px;padding:20px;color:#fff;background:linear-gradient(135deg,#334155,#0b1220 70%);box-shadow:0 12px 28px rgba(0,0,0,.3);margin:6px 0 14px;overflow:hidden}
+.credit-card::after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;background:rgba(255,221,0,.12);right:-70px;top:-100px}
+.credit-card .mc-visa{color:#fff}
+.cc-info{margin:0 0 16px!important}
+.radio-list{display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:10px}
+.radio-list label{display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--line);font-weight:600;color:var(--navy);cursor:pointer}
+.radio-list label:last-child{border-bottom:0}
+.radio-list input[type=radio]{width:20px;height:20px;accent-color:var(--blue)}
+.radio-list b{margin-left:auto}
+.radio-list input[type=text]{margin-left:auto;width:110px;border:1px solid #cfd6e3;border-radius:8px;padding:8px;text-align:right;font:inherit}
+
+/* Montos máximos */
+.limit-card{border:1px solid #cfd6e3;border-radius:8px;overflow:hidden;margin-bottom:14px;background:#fff}
+.limit-head{display:flex;align-items:center;gap:12px;background:#f1f4f9;padding:14px;font-weight:500;cursor:pointer}
+.limit-head input{margin-left:auto;width:22px;height:22px;accent-color:#1d6fb8}
+.limit-body{display:flex;flex-direction:column;gap:6px;padding:14px}
+.money-input{display:flex;border:1px solid #cfd6e3;border-radius:6px;overflow:hidden}
+.money-input span{padding:12px 14px;background:#f1f4f9;border-right:1px solid #cfd6e3;color:#475569}
+.money-input input{flex:1;border:0;outline:none;padding:12px;font:inherit;font-size:16px}
+.money-input:focus-within{border-color:#1d6fb8;box-shadow:0 0 0 2px #dbeafe}
+.limit-card.off .limit-body{display:none}
+
+/* Nuevo contacto */
+.form-title{font-weight:700;color:var(--navy);margin-top:4px}
+.field-group{display:flex;flex-direction:column;gap:8px;font-size:14px;font-weight:700;color:var(--navy)}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pills button{padding:8px 16px;border-radius:8px;border:1.5px solid #cfd6e3;background:#fff;font-weight:600;color:#334155}
+.pills button.on{border-color:#ec4899;background:#fdf2f8;color:#9d174d}
+#new-bank-tabs{margin-bottom:6px}
+
+/* Bienvenida */
+#screen-onboarding{background:#fff}
+.onb{display:flex;flex-direction:column;min-height:100vh;padding:20px 24px 30px;position:relative}
+.onb-skip{align-self:flex-end;color:var(--blue);font-weight:700;padding:8px}
+.onb-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;flex:1;margin:0 -24px}
+.onb-track::-webkit-scrollbar{display:none}
+.onb-slide{flex:0 0 100%;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 34px;gap:14px}
+.onb-slide h2{font-size:26px;color:var(--navy)}
+.onb-slide p{color:#475569;font-size:16px}
+.onb-ill{width:190px;height:190px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#dbeafe,#93c5fd);display:grid;place-items:center;margin-bottom:16px;animation:float 3s ease-in-out infinite}
+.onb-ill.y{background:radial-gradient(circle at 30% 30%,#fff7c2,#ffdd00)}
+.onb-ill.g{background:radial-gradient(circle at 30% 30%,#dcfce7,#86efac)}
+.onb-ill span{font-size:84px;filter:drop-shadow(0 10px 14px rgba(0,0,0,.18))}
+@keyframes float{50%{transform:translateY(-10px)}}
+.onb-dots{margin:16px 0 20px!important}
+[hidden]{display:none!important}

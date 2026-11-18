@@ -196,6 +196,7 @@ $("#search-service").addEventListener("input", renderServicios);
 $("#service-list").addEventListener("click", (e) => {
   const b = e.target.closest("[data-serv]"); if (!b) return;
   servicio = SERVICIOS[+b.dataset.serv];
+  if (servicio.ir) return ir(servicio.ir);
   $("#sp-title").textContent = servicio.cat;
   $("#sp-head").innerHTML = `<span class="avatar serv-ico" style="background:${servicio.color}">${servicio.icono}</span>
     <div class="c-info"><div class="c-alias">${servicio.nombre}</div><div class="c-acc">${servicio.cat}</div></div>`;
@@ -247,36 +248,6 @@ $("#form-recharge").addEventListener("submit", (e) => {
     detalles: [["Operadora", op], ["Número", num], ["Cuenta origen", enmascarar(estado.cuentaNumero)]],
     otraVez: ["recharge", "Hacer otra<br>recarga"],
   }));
-});
-
-/* ---------- Retiro sin tarjeta ---------- */
-let montoRetiro = 20, relojRetiro = null;
-function resetRetiro() {
-  $("#wd-form").hidden = false; $("#wd-result").hidden = true; $("#wd-error").textContent = "";
-  clearInterval(relojRetiro);
-}
-$("#wd-amounts").addEventListener("click", (e) => {
-  const b = e.target.closest("[data-v]"); if (!b) return;
-  $("#wd-amounts").querySelectorAll("button").forEach((x) => x.classList.remove("on"));
-  b.classList.add("on"); montoRetiro = +b.dataset.v; vibrar();
-});
-$("#btn-wd").addEventListener("click", () => {
-  if (montoRetiro > estado.saldo) return ($("#wd-error").textContent = "Saldo insuficiente");
-  pedirClave(() => {
-    const codigo = String(Math.floor(100000 + Math.random() * 900000));
-    estado.saldo = Math.round((estado.saldo - montoRetiro) * 100) / 100;
-    estado.movimientos.push({ tipo: "out", titulo: "Retiro sin tarjeta", monto: montoRetiro, fecha: new Date().toISOString() });
-    guardar();
-    $("#wd-code").textContent = codigo.replace(/(\d{3})(\d{3})/, "$1 $2");
-    $("#wd-amount").textContent = dinero(montoRetiro);
-    $("#wd-form").hidden = true; $("#wd-result").hidden = false;
-    let seg = 30 * 60;
-    clearInterval(relojRetiro);
-    relojRetiro = setInterval(() => {
-      seg--; $("#wd-timer").textContent = `${String(Math.floor(seg / 60)).padStart(2, "0")}:${String(seg % 60).padStart(2, "0")}`;
-      if (seg <= 0) clearInterval(relojRetiro);
-    }, 1000);
-  });
 });
 
 /* ---------- Ajustes de perfil ---------- */

@@ -82,7 +82,7 @@ function ir(nombre, { reemplazar = false, efecto = "" } = {}) {
   const render = { home: renderInicio, transfer: renderContactos, "new-account": resetNueva, amount: renderMonto,
                    confirm: renderConfirmar, receive: renderRecibir, profile: renderPerfil, products: renderProductos,
                    requests: renderSolicitudes, qr: abrirQR, services: renderServicios, recharge: resetRecarga,
-                   withdraw: resetRetiro }[nombre];
+                   withdraw: resetRetiro, own: renderOwn, cards: renderTarjetas, limits: renderLimites }[nombre];
   if (render) render();
 }
 function atras() { ir(historial.pop() || "home", { reemplazar: true, efecto: "back" }); }
@@ -95,10 +95,11 @@ function productos() {
     { cat: "Cuentas", nombre: estado.cuentaAlias, mask: "******" + estado.cuentaNumero.slice(-4), saldo: estado.saldo, tipo: "Cuenta<br>Transaccional", fav: true },
     { cat: "Cuentas", nombre: "AHORRO" + estado.ahorroNumero.slice(-4), mask: "******" + estado.ahorroNumero.slice(-4), saldo: estado.ahorro, tipo: "Cuenta de<br>Ahorros" },
     { cat: "Tarjetas", nombre: "VISA DÉBITO", mask: "•••• 8633", saldo: estado.saldo, tipo: estado.tarjetaBloqueada ? "<b class='lock-txt'>Bloqueada</b>" : "Tarjeta de<br>Débito", etiqueta: "Disponible" },
+    { cat: "Tarjetas", nombre: "SIGNATURE", mask: "•••• 4021", saldo: estado.tc.deuda, tipo: "Tarjeta de<br>Crédito", etiqueta: "Total a pagar", oscura: true },
   ];
 }
 function tarjetaProducto(p) {
-  return `<div class="account-card">
+  return `<div class="account-card${p.oscura ? " dark" : ""}">
       <div class="account-top">
         <div><div class="account-name">${p.nombre}</div><div class="account-mask">${p.mask}</div></div>
         ${p.fav ? `<div class="fav"><span class="star">★</span> Cta. favorita</div>` : ""}
@@ -229,20 +230,6 @@ function elegirSugerencia(idx) {
   actualizarVistaPrevia();
 }
 
-/* ---------- Monto ---------- */
-function renderMonto() {
-  const c = destinatario;
-  $("#amount-recipient").innerHTML = `${avatarHTML(c)}
-    <div class="c-info"><div class="c-alias">${escapar(c.nombre)}</div>
-    <div class="c-acc">${escapar(c.tipo)} | ${escapar(c.cuenta)}</div>
-    <span class="bank-chip"><i></i>${escapar(c.banco)}</span></div>`;
-  $("#amount-balance").textContent = dinero(estado.saldo);
-  $("#amount-error").textContent = "";
-  centavos = 0;
-  $("#amount").value = dinero(0);
-  $("#description").value = "";
-  setTimeout(() => $("#amount").focus(), 300);
-}
 
 /* ---------- Confirmar ---------- */
 function renderConfirmar() {
@@ -264,7 +251,9 @@ function ejecutarTransferencia() {
     linea: "A " + apellidosPrimero(c.nombre),
     movimiento: (c.comercio ? "Pago QR " : "Transferencia a ") + c.nombre,
     foto: c.foto || null,
-    detalles: [["Cuenta destino", enmascarar(c.cuenta)], ["Banco destino", c.banco], ["Cuenta origen", enmascarar(estado.cuentaNumero)]]
+    desde: transferencia.desde, costo: transferencia.costo,
+    detalles: [["Cuenta destino", enmascarar(c.cuenta)], ["Banco destino", c.banco], ["Cuenta origen", enmascarar(numeroCuenta(transferencia.desde))]]
+      .concat(transferencia.costo ? [["Costo", dinero(transferencia.costo)]] : [])
       .concat(desc ? [["Descripción", desc]] : []),
     otraVez: ["transfer", "Volver a<br>transferir"],
   });
@@ -273,8 +262,12 @@ function ejecutarTransferencia() {
 function finalizarOperacion(op) {
   const ahora = new Date();
   const numero = String(Math.floor(100000000 + Math.random() * 900000000));
-  estado.saldo = Math.round((estado.saldo - op.monto) * 100) / 100;
-  estado.movimientos.push({ tipo: "out", titulo: op.movimiento, monto: op.monto, fecha: ahora.toISOString(), foto: op.foto || null });
+  const desde = op.desde || "saldo";
+  const total = Math.round((op.monto + (op.costo || 0)) * 100) / 100;
+  estado[desde] = Math.round((estado[desde] - total) * 100) / 100;
+  if (op.acreditar) estado[op.acreditar] = Math.round((estado[op.acreditar] + op.monto) * 100) / 100;
+  if (op.alFinal) op.alFinal();
+  estado.movimientos.push({ tipo: "out", titulo: op.movimiento, monto: total, fecha: ahora.toISOString(), foto: op.foto || null });
   guardar();
   renderComprobante(op, ahora, numero);
   historial = [];
@@ -423,31 +416,6 @@ $("#form-new").addEventListener("submit", (e) => {
   ir("amount", { reemplazar: true });
 });
 
-// Monto estilo app bancaria: escribes 3-1-5 y se ve $3,15
-function pintarMonto() {
-  const el = $("#amount");
-  el.value = dinero(centavos / 100);
-  requestAnimationFrame(() => el.setSelectionRange(el.value.length, el.value.length));
-  $("#amount-error").textContent = "";
-}
-$("#amount").addEventListener("beforeinput", (e) => {
-  e.preventDefault();                               // nosotros controlamos el texto
-  if (e.inputType.startsWith("delete")) centavos = Math.floor(centavos / 10);
-  else if (/^\d+$/.test(e.data || "")) centavos = Math.min(+(String(centavos) + e.data), 9999999);
-  pintarMonto();
-});
-$("#amount").addEventListener("input", pintarMonto); // por si algún teclado no envía beforeinput
-$("#amount").addEventListener("focus", pintarMonto);
-document.querySelectorAll("[data-monto]").forEach((b) =>
-  b.addEventListener("click", () => { centavos = +b.dataset.monto * 100; pintarMonto(); vibrar(); }));
-$("#form-amount").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const monto = centavos / 100;
-  if (monto <= 0) return ($("#amount-error").textContent = "Ingresa un monto válido");
-  if (monto > estado.saldo) return ($("#amount-error").textContent = "Saldo insuficiente");
-  transferencia = { monto, descripcion: $("#description").value.trim() };
-  ir("confirm");
-});
 $("#btn-confirm").addEventListener("click", () => pedirClave(ejecutarTransferencia));
 
 /* ---------- Clave de seguridad + procesando ---------- */

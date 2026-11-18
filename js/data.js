@@ -30,6 +30,9 @@ const ESTADO_INICIAL = {
   ahorro: 1250.00,
   ahorroNumero: "2200711204",
   tarjetaBloqueada: false,
+  tc: { deuda: 85.40, minimo: 15.00 },          // tarjeta de crédito Signature
+  limites: { web: 600, webOn: true, movil: 1500, movilOn: true },
+  celular: "0991234567",
   movimientos: [
     { tipo: "in",  titulo: "Depósito de nómina", monto: 450.00, fecha: "2026-11-01T09:12:00" },
     { tipo: "out", titulo: "Pago Electricidad",  monto: 26.61,  fecha: "2026-11-03T18:40:00" },
@@ -48,6 +51,7 @@ const ESTADO_INICIAL = {
 
 /* Empresas para "Pagar servicios" (nombres ficticios) */
 const SERVICIOS = [
+  { nombre: "Recargas de celular",      cat: "Recargas",   icono: "📱", color: "#ede9fe", ir: "recharge" },
   { nombre: "Empresa Eléctrica Andina", cat: "Luz",        icono: "💡", color: "#fef3c7" },
   { nombre: "Agua Potable Municipal",   cat: "Agua",       icono: "💧", color: "#dbeafe" },
   { nombre: "FibraNet Hogar",           cat: "Internet",   icono: "🌐", color: "#e0e7ff" },
