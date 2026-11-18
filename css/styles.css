@@ -561,3 +561,11 @@ h2,.h2-sm,.subtitle{font-weight:600}
 .slide-confirm.hint .slide-knob{animation:nudge .7s ease}
 @keyframes nudge{30%{margin-left:26px}60%{margin-left:0}80%{margin-left:10px}}
 .products-track,.carousel,.onb-track{touch-action:pan-x pan-y}
+
+/* =================== Desplazamiento vertical en celulares =================== */
+/* La app es su propio contenedor con scroll: funciona en el navegador, en la app instalada
+   y dentro de marcos (iframes) como el visor de enlaces. */
+html,body{height:100%;overflow:hidden}
+.phone{height:100%;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y}
+.screen{min-height:100%}
+@media (min-width:600px){ .phone{height:860px} }
